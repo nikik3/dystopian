@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚠️ The Doomloop - Code that Never Ends</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a0000 0%, #330000 100%);
+            color: #ff3333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid #ff3333;
+            box-shadow: 0 0 20px rgba(255, 51, 51, 0.3);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-shadow: 0 0 10px #ff3333, 0 0 20px #ff3333;
+            animation: warning 1s ease-in-out infinite;
+        }
+
+        @keyframes warning {
+            0%, 100% { color: #ff3333; }
+            50% { color: #ff6666; }
+        }
+
+        .subtitle {
+            color: #ff6666;
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+
+        .game-area {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 968px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .code-editor {
+            background: #000;
+            border: 2px solid #ff3333;
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            min-height: 400px;
+        }
+
+        .editor-header {
+            color: #ff6666;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .code-line {
+            padding: 5px 10px;
+            margin: 2px 0;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .code-line.buggy {
+            background: rgba(255, 51, 51, 0.2);
+            border-left: 3px solid #ff3333;
+        }
+
+        .code-line.fixed {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 3px solid #00ff88;
+        }
+
+        .code-line:hover {
+            background: rgba(255, 51, 51, 0.1);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stats-panel {
+            background: rgba(255, 51, 51, 0.1);
+            border: 2px solid #ff3333;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .stat {
+            margin: 15px 0;
+        }
+
+        .stat-label {
+            color: #ff6666;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: #ff3333;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .bug-queue {
+            background: rgba(255, 51, 51, 0.1);
+            border: 2px solid #ff3333;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .bug-queue h3 {
+            color: #ff3333;
+            margin-bottom: 15px;
+        }
+
+        .bug-item {
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 3px solid #ff3333;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 3px;
+            font-size: 0.9rem;
+        }
+
+        .bug-severity {
+            color: #ff6666;
+            font-size: 0.75rem;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff3333, #ff6666);
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(255, 51, 51, 0.8);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress-bar {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #ff3333;
+            border-radius: 10px;
+            height: 30px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #ff3333, #ff6666);
+            height: 100%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(255, 51, 51, 0.8);
+        }
+
+        .message {
+            background: rgba(255, 51, 51, 0.2);
+            border: 2px solid #ff3333;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚠️ THE DOOMLOOP</h1>
+            <p class="subtitle">// Code that Never Ends</p>
+        </header>
+
+        <div class="controls">
+            <button class="btn" onclick="startGame()" id="startBtn">BEGIN DEBUGGING</button>
+            <button class="btn" onclick="fixBug()" id="fixBtn" disabled>FIX CURRENT BUG</button>
+            <button class="btn" onclick="skipBug()" id="skipBtn" disabled>SKIP (-10 SCORE)</button>
+            <button class="btn" onclick="resetGame()">RESET LOOP</button>
+        </div>
+
+        <div id="message" class="message" style="display: none;"></div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+        </div>
+
+        <div class="game-area">
+            <div class="code-editor">
+                <div class="editor-header">// main.js - Line <span id="currentLine">1</span></div>
+                <div id="codeDisplay"></div>
+            </div>
+
+            <div class="sidebar">
+                <div class="stats-panel">
+                    <div class="stat">
+                        <div class="stat-label">BUGS FIXED</div>
+                        <div class="stat-value" id="bugsFixed">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">SCORE</div>
+                        <div class="stat-value" id="score">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">DIFFICULTY</div>
+                        <div class="stat-value" id="difficulty">1</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">SANITY</div>
+                        <div class="stat-value" id="sanity">100%</div>
+                    </div>
+                </div>
+
+                <div class="bug-queue">
+                    <h3>📋 BUG QUEUE</h3>
+                    <div id="bugQueue"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bugTypes = [
+            { name: 'Null Pointer Exception', difficulty: 1 },
+            { name: 'Undefined Variable', difficulty: 1 },
+            { name: 'Syntax Error', difficulty: 1 },
+            { name: 'Race Condition', difficulty: 2 },
+            { name: 'Memory Leak', difficulty: 2 },
+            { name: 'Stack Overflow', difficulty: 3 },
+            { name: 'Deadlock', difficulty: 3 },
+            { name: 'Quantum Entanglement Bug', difficulty: 4 },
+            { name: 'Temporal Paradox Error', difficulty: 5 }
+        ];
+
+        const codeSnippets = [
+            'function calculateTotal(items) {',
+            '  let sum = 0;',
+            '  for (let i = 0; i < items.length; i++) {',
+            '    sum += items[i].price;',
+            '  }',
+            '  return sum;',
+            '}',
+            '',
+            'async function fetchData(url) {',
+            '  const response = await fetch(url);',
+            '  return response.json();',
+            '}',
+            '',
+            'class UserManager {',
+            '  constructor() {',
+            '    this.users = [];',
+            '  }',
+            '  addUser(user) {',
+            '    this.users.push(user);',
+            '  }',
+            '}'
+        ];
+
+        let gameActive = false;
+        let currentBug = null;
+        let bugQueue = [];
+        let score = 0;
+        let bugsFixed = 0;
+        let difficulty = 1;
+        let sanity = 100;
+        let bugLine = 0;
+
+        function startGame() {
+            gameActive = true;
+            score = 0;
+            bugsFixed = 0;
+            difficulty = 1;
+            sanity = 100;
+            bugQueue = [];
+
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('fixBtn').disabled = false;
+            document.getElementById('skipBtn').disabled = false;
+
+            spawnBug();
+            renderCode();
+            updateStats();
+            showMessage('🐛 Bug detected! Start debugging...', 2000);
+        }
+
+        function spawnBug() {
+            const availableBugs = bugTypes.filter(b => b.difficulty <= difficulty + 1);
+            const bug = availableBugs[Math.floor(Math.random() * availableBugs.length)];
+            
+            currentBug = {
+                id: Date.now(),
+                name: bug.name,
+                difficulty: bug.difficulty,
+                line: Math.floor(Math.random() * codeSnippets.length)
+            };
+
+            bugLine = currentBug.line;
+            bugQueue.unshift(currentBug);
+            if (bugQueue.length > 5) bugQueue.pop();
+
+            renderBugQueue();
+            renderCode();
+        }
+
+        function renderCode() {
+            const display = document.getElementById('codeDisplay');
+            document.getElementById('currentLine').textContent = bugLine + 1;
+
+            display.innerHTML = codeSnippets.map((line, idx) => {
+                const classes = ['code-line'];
+                if (idx === bugLine) classes.push('buggy');
+                return `<div class="${classes.join(' ')}">${line || '&nbsp;'}</div>`;
+            }).join('');
+        }
+
+        function renderBugQueue() {
+            const queue = document.getElementById('bugQueue');
+            if (bugQueue.length === 0) {
+                queue.innerHTML = '<p style="color: #666; text-align: center;">Queue empty</p>';
+                return;
+            }
+
+            queue.innerHTML = bugQueue.map((bug, idx) => `
+                <div class="bug-item">
+                    ${idx === 0 ? '→ ' : '  '}${bug.name}
+                    <div class="bug-severity">Level ${bug.difficulty}</div>
+                </div>
+            `).join('');
+        }
+
+        function fixBug() {
+            if (!currentBug || !gameActive) return;
+
+            bugsFixed++;
+            score += currentBug.difficulty * 10;
+            
+            if (bugsFixed % 5 === 0) {
+                difficulty++;
+                showMessage(`⬆️ Difficulty increased to ${difficulty}!`, 2000);
+            }
+
+            sanity = Math.max(0, sanity - (currentBug.difficulty * 2));
+
+            bugQueue.shift();
+            showMessage(`✓ Bug fixed! +${currentBug.difficulty * 10} points`, 1500);
+
+            setTimeout(() => {
+                spawnBug();
+                spawnBug(); // Each fix spawns TWO new bugs!
+                showMessage('⚠️ Fixing that bug created TWO more bugs!', 2000);
+            }, 1000);
+
+            updateStats();
+        }
+
+        function skipBug() {
+            if (!currentBug || !gameActive) return;
+
+            score = Math.max(0, score - 10);
+            sanity = Math.max(0, sanity - 5);
+            bugQueue.shift();
+            
+            showMessage('Skipped! -10 points', 1500);
+            
+            setTimeout(() => spawnBug(), 500);
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('bugsFixed').textContent = bugsFixed;
+            document.getElementById('score').textContent = score;
+            document.getElementById('difficulty').textContent = difficulty;
+            document.getElementById('sanity').textContent = sanity + '%';
+            document.getElementById('progressBar').style.width = (bugsFixed % 10) * 10 + '%';
+
+            if (sanity <= 0) {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            gameActive = false;
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('fixBtn').disabled = true;
+            document.getElementById('skipBtn').disabled = true;
+            showMessage(`💀 SANITY DEPLETED! Final Score: ${score} | Bugs Fixed: ${bugsFixed}`, 0);
+        }
+
+        function resetGame() {
+            gameActive = false;
+            currentBug = null;
+            bugQueue = [];
+            score = 0;
+            bugsFixed = 0;
+            difficulty = 1;
+            sanity = 100;
+
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('fixBtn').disabled = true;
+            document.getElementById('skipBtn').disabled = true;
+
+            renderCode();
+            renderBugQueue();
+            updateStats();
+            showMessage('Loop reset. Ready to begin...', 2000);
+        }
+
+        function showMessage(text, duration) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.style.display = 'block';
+            
+            if (duration > 0) {
+                setTimeout(() => {
+                    msg.style.display = 'none';
+                }, duration);
+            }
+        }
+
+        renderCode();
+        updateStats();
+    </script>
+</body>
+</html>

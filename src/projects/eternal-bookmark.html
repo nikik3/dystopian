@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔒 Eternal Bookmark - Code-stored Memory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #000428 0%, #004e92 100%);
+            color: #4dd0e1;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid #4dd0e1;
+            box-shadow: 0 0 20px rgba(77, 208, 225, 0.3);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-shadow: 0 0 10px #4dd0e1, 0 0 20px #4dd0e1;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .subtitle {
+            color: #80deea;
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+
+        .vault-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .vault-card {
+            background: rgba(77, 208, 225, 0.1);
+            border: 2px solid #4dd0e1;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .vault-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(77, 208, 225, 0.4);
+            background: rgba(77, 208, 225, 0.15);
+        }
+
+        .vault-icon {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .vault-title {
+            color: #4dd0e1;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .vault-date {
+            color: #80deea;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .vault-locked {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #ff6b6b;
+            font-size: 1.2rem;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4dd0e1, #00acc1);
+            color: #000428;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 15px rgba(77, 208, 225, 0.5);
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(77, 208, 225, 0.8);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #000428 0%, #004e92 100%);
+            border: 3px solid #4dd0e1;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 0 50px rgba(77, 208, 225, 0.6);
+        }
+
+        .modal-content h2 {
+            color: #4dd0e1;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin: 20px 0;
+        }
+
+        .form-label {
+            color: #80deea;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(77, 208, 225, 0.1);
+            border: 2px solid #4dd0e1;
+            border-radius: 5px;
+            color: #4dd0e1;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(77, 208, 225, 0.5);
+        }
+
+        textarea.form-input {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .vault-content {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #4dd0e1;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+            line-height: 1.6;
+            color: #fff;
+        }
+
+        .puzzle-container {
+            background: rgba(255, 107, 107, 0.1);
+            border: 2px dashed #ff6b6b;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .puzzle-question {
+            color: #ff6b6b;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(77, 208, 225, 0.1);
+            border: 2px solid #4dd0e1;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #80deea;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #4dd0e1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔒 ETERNAL BOOKMARK</h1>
+            <p class="subtitle">// Code-stored Memory</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">TOTAL VAULTS</div>
+                <div class="stat-value" id="totalVaults">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">UNLOCKED</div>
+                <div class="stat-value" id="unlockedVaults">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">SEALED</div>
+                <div class="stat-value" id="sealedVaults">0</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="openCreateModal()">+ CREATE VAULT</button>
+            <button class="btn" onclick="clearVaults()">🗑️ CLEAR ALL</button>
+        </div>
+
+        <div class="vault-grid" id="vaultGrid"></div>
+    </div>
+
+    <!-- Create Vault Modal -->
+    <div id="createModal" class="modal">
+        <div class="modal-content">
+            <h2>CREATE MEMORY VAULT</h2>
+            <div class="form-group">
+                <label class="form-label">Vault Title</label>
+                <input type="text" class="form-input" id="vaultTitle" placeholder="My Secret Memory">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Secret Phrase (to unlock)</label>
+                <input type="password" class="form-input" id="vaultPassword" placeholder="Enter your secret phrase">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Memory Content</label>
+                <textarea class="form-input" id="vaultContent" placeholder="Write your memory here..."></textarea>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="flex: 1;" onclick="createVault()">CREATE</button>
+                <button class="btn" style="flex: 1;" onclick="closeModal('createModal')">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unlock Vault Modal -->
+    <div id="unlockModal" class="modal">
+        <div class="modal-content">
+            <h2 id="unlockTitle">UNLOCK VAULT</h2>
+            <div class="form-group">
+                <label class="form-label">Enter Secret Phrase</label>
+                <input type="password" class="form-input" id="unlockPassword" placeholder="Enter secret phrase">
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="flex: 1;" onclick="unlockVault()">UNLOCK</button>
+                <button class="btn" style="flex: 1;" onclick="closeModal('unlockModal')">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Vault Modal -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <h2 id="viewTitle">Memory Vault</h2>
+            <div class="vault-content" id="viewContent"></div>
+            <div class="puzzle-container" id="puzzleContainer" style="display: none;">
+                <div class="puzzle-question" id="puzzleQuestion"></div>
+                <input type="text" class="form-input" id="puzzleAnswer" placeholder="Your answer...">
+                <button class="btn" style="margin-top: 15px;" onclick="checkPuzzle()">SUBMIT</button>
+            </div>
+            <button class="btn" style="width: 100%; margin-top: 20px;" onclick="closeModal('viewModal')">CLOSE</button>
+        </div>
+    </div>
+
+    <script>
+        let vaults = JSON.parse(localStorage.getItem('eternalbookmark_vaults') || '[]');
+        let currentVaultId = null;
+
+        const puzzles = [
+            { question: 'What year did you create this vault?', answer: new Date().getFullYear().toString() },
+            { question: 'Complete: The sky is ___', answer: 'blue' },
+            { question: 'What is 7 + 8?', answer: '15' },
+            { question: 'First color of the rainbow', answer: 'red' },
+            { question: 'How many days in a week?', answer: '7' }
+        ];
+
+        function updateStats() {
+            document.getElementById('totalVaults').textContent = vaults.length;
+            document.getElementById('unlockedVaults').textContent = vaults.filter(v => v.unlocked).length;
+            document.getElementById('sealedVaults').textContent = vaults.filter(v => !v.unlocked).length;
+        }
+
+        function renderVaults() {
+            const grid = document.getElementById('vaultGrid');
+            
+            if (vaults.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1/-1; padding: 40px;">No vaults created yet. Create your first memory vault!</p>';
+                return;
+            }
+
+            grid.innerHTML = vaults.map(vault => `
+                <div class="vault-card" onclick="attemptUnlock(${vault.id})">
+                    <div class="vault-icon">${vault.unlocked ? '🔓' : '🔒'}</div>
+                    <div class="vault-title">${vault.title}</div>
+                    <div class="vault-date">${vault.date}</div>
+                    ${!vault.unlocked ? '<div class="vault-locked">🔐</div>' : ''}
+                </div>
+            `).join('');
+        }
+
+        function openCreateModal() {
+            document.getElementById('createModal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            // Clear inputs
+            document.querySelectorAll('.form-input').forEach(input => input.value = '');
+        }
+
+        function createVault() {
+            const title = document.getElementById('vaultTitle').value;
+            const password = document.getElementById('vaultPassword').value;
+            const content = document.getElementById('vaultContent').value;
+
+            if (!title || !password || !content) {
+                alert('Please fill in all fields!');
+                return;
+            }
+
+            const vault = {
+                id: Date.now(),
+                title: title,
+                password: btoa(password), // Simple encoding (NOT secure for real use!)
+                content: content,
+                date: new Date().toLocaleDateString(),
+                unlocked: false,
+                puzzle: puzzles[Math.floor(Math.random() * puzzles.length)]
+            };
+
+            vaults.push(vault);
+            localStorage.setItem('eternalbookmark_vaults', JSON.stringify(vaults));
+            
+            renderVaults();
+            updateStats();
+            closeModal('createModal');
+        }
+
+        function attemptUnlock(id) {
+            currentVaultId = id;
+            const vault = vaults.find(v => v.id === id);
+            
+            if (vault.unlocked) {
+                viewVault(id);
+            } else {
+                document.getElementById('unlockTitle').textContent = `Unlock: ${vault.title}`;
+                document.getElementById('unlockModal').style.display = 'flex';
+            }
+        }
+
+        function unlockVault() {
+            const password = document.getElementById('unlockPassword').value;
+            const vault = vaults.find(v => v.id === currentVaultId);
+
+            if (btoa(password) === vault.password) {
+                vault.unlocked = true;
+                localStorage.setItem('eternalbookmark_vaults', JSON.stringify(vaults));
+                closeModal('unlockModal');
+                viewVault(currentVaultId);
+                renderVaults();
+                updateStats();
+            } else {
+                alert('❌ Incorrect secret phrase!');
+            }
+        }
+
+        function viewVault(id) {
+            const vault = vaults.find(v => v.id === id);
+            document.getElementById('viewTitle').textContent = vault.title;
+            document.getElementById('viewContent').textContent = vault.content;
+            
+            // Show puzzle
+            const puzzleContainer = document.getElementById('puzzleContainer');
+            document.getElementById('puzzleQuestion').textContent = vault.puzzle.question;
+            puzzleContainer.style.display = 'block';
+            
+            document.getElementById('viewModal').style.display = 'flex';
+        }
+
+        function checkPuzzle() {
+            const answer = document.getElementById('puzzleAnswer').value.toLowerCase().trim();
+            const vault = vaults.find(v => v.id === currentVaultId);
+            
+            if (answer === vault.puzzle.answer.toLowerCase()) {
+                alert('✓ Correct! You have unlocked a deeper layer of this memory.');
+                document.getElementById('puzzleContainer').style.display = 'none';
+            } else {
+                alert('❌ Incorrect answer. The memory remains partially sealed.');
+            }
+        }
+
+        function clearVaults() {
+            if (confirm('Delete all vaults? This cannot be undone!')) {
+                vaults = [];
+                localStorage.removeItem('eternalbookmark_vaults');
+                renderVaults();
+                updateStats();
+            }
+        }
+
+        renderVaults();
+        updateStats();
+    </script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👻 Phantom Click - The Ghost in the Code</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #00ff88;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .subtitle {
+            color: #00d4ff;
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .stat-label {
+            color: #00d4ff;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .game-area {
+            position: relative;
+            height: 500px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 3px solid #00ff88;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
+        }
+
+        .ghost {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .ghost.invisible {
+            background: transparent;
+        }
+
+        .ghost.invisible:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: rgba(0, 212, 255, 0.5);
+        }
+
+        .ghost.visible {
+            background: rgba(138, 43, 226, 0.3);
+            border-color: #8a2be2;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .ghost.clicked {
+            animation: capture 0.5s ease-out forwards;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        @keyframes capture {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        .ghost-emoji {
+            font-size: 30px;
+            line-height: 56px;
+            text-align: center;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: #0a0e27;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .instructions {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .instructions h2 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .instructions li {
+            padding: 8px 0;
+            color: #aaa;
+        }
+
+        .instructions li:before {
+            content: "▸ ";
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 255, 136, 0.9);
+            color: #0a0e27;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+            animation: slideIn 0.3s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>👻 PHANTOM CLICK</h1>
+            <p class="subtitle">// The Ghost in the Code</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">SCORE</div>
+                <div class="stat-value" id="score">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">LEVEL</div>
+                <div class="stat-value" id="level">1</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">TIME LEFT</div>
+                <div class="stat-value" id="time">30s</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">GHOSTS LEFT</div>
+                <div class="stat-value" id="ghosts">0</div>
+            </div>
+        </div>
+
+        <div id="instructions" class="instructions">
+            <h2>📖 HOW TO PLAY</h2>
+            <ul>
+                <li>Click on invisible ghost zones to reveal and capture them</li>
+                <li>Some ghosts are semi-visible (purple glow), others are completely hidden</li>
+                <li>Each level spawns more ghosts with increased difficulty</li>
+                <li>You gain 10 seconds when completing a level</li>
+                <li>Race against time to maximize your score!</li>
+            </ul>
+        </div>
+
+        <div class="controls">
+            <button class="btn" id="startBtn" onclick="startGame()">START HUNTING</button>
+        </div>
+
+        <div id="gameArea" class="game-area hidden"></div>
+    </div>
+
+    <script>
+        let score = 0;
+        let level = 1;
+        let timeLeft = 30;
+        let ghosts = [];
+        let gameActive = false;
+        let timer = null;
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('level').textContent = level;
+            document.getElementById('time').textContent = timeLeft + 's';
+            document.getElementById('ghosts').textContent = ghosts.filter(g => !g.clicked).length;
+        }
+
+        function startGame() {
+            gameActive = true;
+            score = 0;
+            level = 1;
+            timeLeft = 30;
+            
+            document.getElementById('instructions').classList.add('hidden');
+            document.getElementById('gameArea').classList.remove('hidden');
+            document.getElementById('startBtn').textContent = 'GAME ACTIVE';
+            document.getElementById('startBtn').disabled = true;
+            
+            spawnGhosts(3);
+            startTimer();
+            showToast('👻 Game Started! Find the ghosts!');
+        }
+
+        function startTimer() {
+            if (timer) clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                updateStats();
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function spawnGhosts(count) {
+            const gameArea = document.getElementById('gameArea');
+            gameArea.innerHTML = '';
+            ghosts = [];
+
+            for (let i = 0; i < count; i++) {
+                const ghost = {
+                    id: Date.now() + i,
+                    x: Math.random() * 85 + 5,
+                    y: Math.random() * 80 + 5,
+                    visible: Math.random() > 0.6,
+                    clicked: false
+                };
+
+                ghosts.push(ghost);
+
+                const ghostEl = document.createElement('div');
+                ghostEl.className = 'ghost ' + (ghost.visible ? 'visible' : 'invisible');
+                ghostEl.style.left = ghost.x + '%';
+                ghostEl.style.top = ghost.y + '%';
+                ghostEl.dataset.id = ghost.id;
+                ghostEl.onclick = () => captureGhost(ghost.id);
+
+                gameArea.appendChild(ghostEl);
+            }
+
+            updateStats();
+        }
+
+        function captureGhost(id) {
+            const ghost = ghosts.find(g => g.id === id);
+            if (!ghost || ghost.clicked) return;
+
+            ghost.clicked = true;
+            score += 10 * level;
+
+            const ghostEl = document.querySelector(`[data-id="${id}"]`);
+            ghostEl.classList.add('clicked');
+            ghostEl.innerHTML = '<div class="ghost-emoji">👻</div>';
+
+            setTimeout(() => ghostEl.remove(), 500);
+
+            showToast(`👻 Ghost captured! +${10 * level} points`);
+            updateStats();
+
+            const remainingGhosts = ghosts.filter(g => !g.clicked);
+            if (remainingGhosts.length === 0) {
+                setTimeout(() => {
+                    level++;
+                    timeLeft += 10;
+                    spawnGhosts(3 + level);
+                    showToast(`🎉 Level ${level}! More ghosts incoming...`);
+                }, 600);
+            }
+        }
+
+        function endGame() {
+            clearInterval(timer);
+            gameActive = false;
+            
+            document.getElementById('gameArea').classList.add('hidden');
+            document.getElementById('instructions').classList.remove('hidden');
+            document.getElementById('startBtn').textContent = 'PLAY AGAIN';
+            document.getElementById('startBtn').disabled = false;
+            
+            showToast(`💀 Game Over! Final Score: ${score}`);
+        }
+
+        updateStats();
+    </script>
+</body>
+</html>

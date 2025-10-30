@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⏳ Chaos Scheduler - The Quantum Timekeeper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a0033 0%, #330066 100%);
+            color: #ffaa00;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid #ffaa00;
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-shadow: 0 0 10px #ffaa00, 0 0 20px #ffaa00;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+        }
+
+        .subtitle {
+            color: #ff6600;
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+
+        .quantum-clock {
+            background: rgba(255, 170, 0, 0.1);
+            border: 3px solid #ffaa00;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 170, 0, 0.4);
+        }
+
+        .time-display {
+            font-size: 4rem;
+            color: #ffaa00;
+            text-shadow: 0 0 20px #ffaa00;
+            font-weight: bold;
+            letter-spacing: 5px;
+        }
+
+        .quantum-state {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            color: #ff6600;
+        }
+
+        .timeline {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #ffaa00;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .timeline h2 {
+            color: #ffaa00;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .appointment {
+            background: rgba(255, 170, 0, 0.1);
+            border-left: 4px solid #ffaa00;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .appointment:hover {
+            background: rgba(255, 170, 0, 0.2);
+            transform: translateX(5px);
+        }
+
+        .appointment-time {
+            color: #ff6600;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .appointment-title {
+            color: #ffaa00;
+            font-size: 1.1rem;
+        }
+
+        .appointment-paradox {
+            color: #ff3300;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ffaa00, #ff6600);
+            color: #1a0033;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(255, 170, 0, 0.8);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .paradox-meter {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #ff3300;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .paradox-label {
+            color: #ff6600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .paradox-bar {
+            background: rgba(255, 51, 0, 0.2);
+            border: 2px solid #ff3300;
+            border-radius: 10px;
+            height: 30px;
+            overflow: hidden;
+        }
+
+        .paradox-fill {
+            background: linear-gradient(90deg, #ffaa00, #ff3300);
+            height: 100%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 15px rgba(255, 51, 0, 0.8);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a0033 0%, #330066 100%);
+            border: 3px solid #ffaa00;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(255, 170, 0, 0.6);
+        }
+
+        .modal-content h2 {
+            color: #ffaa00;
+            margin-bottom: 20px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255, 170, 0, 0.1);
+            border: 2px solid #ffaa00;
+            border-radius: 5px;
+            color: #ffaa00;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⏳ CHAOS SCHEDULER</h1>
+            <p class="subtitle">// The Quantum Timekeeper</p>
+        </header>
+
+        <div class="quantum-clock">
+            <div class="time-display" id="currentTime">00:00:00</div>
+            <div class="quantum-state" id="quantumState">Quantum State: STABLE</div>
+        </div>
+
+        <div class="paradox-meter">
+            <div class="paradox-label">⚠️ PARADOX LEVEL: <span id="paradoxLevel">0</span>%</div>
+            <div class="paradox-bar">
+                <div class="paradox-fill" id="paradoxFill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="addRandomAppointment()">+ RANDOM APPOINTMENT</button>
+            <button class="btn" onclick="openAddModal()">+ MANUAL ENTRY</button>
+            <button class="btn" onclick="hackParadox()">🔧 HACK TIMELINE</button>
+            <button class="btn" onclick="resetTimeline()">🔄 RESET TIMELINE</button>
+        </div>
+
+        <div class="timeline">
+            <h2>📅 QUANTUM TIMELINE</h2>
+            <div id="appointments">
+                <p style="text-align: center; color: #666;">No appointments in this timeline... yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <h2>ADD APPOINTMENT</h2>
+            <input type="text" id="appointmentTitle" placeholder="Appointment Title">
+            <input type="time" id="appointmentTime">
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button class="btn" style="flex: 1;" onclick="saveAppointment()">SAVE</button>
+                <button class="btn" style="flex: 1;" onclick="closeModal()">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let appointments = [];
+        let paradoxLevel = 0;
+        let quantumStates = ['STABLE', 'FLUCTUATING', 'UNSTABLE', 'CRITICAL'];
+
+        const paradoxes = [
+            'Overlaps with meeting from parallel timeline',
+            'Scheduled in the past of an alternate you',
+            'Conflicts with future decision',
+            'Exists in quantum superposition',
+            'Timeline branch detected',
+            'Causality loop identified'
+        ];
+
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour12: false });
+            document.getElementById('currentTime').textContent = timeString;
+
+            // Quantum state based on paradox level
+            let state = quantumStates[0];
+            if (paradoxLevel > 75) state = quantumStates[3];
+            else if (paradoxLevel > 50) state = quantumStates[2];
+            else if (paradoxLevel > 25) state = quantumStates[1];
+            
+            document.getElementById('quantumState').textContent = `Quantum State: ${state}`;
+        }
+
+        function updateParadoxMeter() {
+            document.getElementById('paradoxLevel').textContent = Math.round(paradoxLevel);
+            document.getElementById('paradoxFill').style.width = paradoxLevel + '%';
+            
+            if (paradoxLevel >= 100) {
+                alert('⚠️ TIMELINE COLLAPSE! The paradox level is too high. Resetting timeline...');
+                resetTimeline();
+            }
+        }
+
+        function addRandomAppointment() {
+            const titles = [
+                'Meeting with Past Self',
+                'Quantum Coffee Break',
+                'Parallel Universe Sync',
+                'Future Planning Session',
+                'Temporal Debugging',
+                'Multiverse Conference',
+                'Time Travel Consultation'
+            ];
+
+            const hour = Math.floor(Math.random() * 24);
+            const minute = Math.floor(Math.random() * 60);
+            const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+
+            const appointment = {
+                id: Date.now(),
+                title: titles[Math.floor(Math.random() * titles.length)],
+                time: timeString,
+                paradox: paradoxes[Math.floor(Math.random() * paradoxes.length)]
+            };
+
+            appointments.push(appointment);
+            paradoxLevel = Math.min(100, paradoxLevel + Math.random() * 15 + 5);
+            
+            renderAppointments();
+            updateParadoxMeter();
+        }
+
+        function openAddModal() {
+            document.getElementById('addModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('addModal').style.display = 'none';
+            document.getElementById('appointmentTitle').value = '';
+            document.getElementById('appointmentTime').value = '';
+        }
+
+        function saveAppointment() {
+            const title = document.getElementById('appointmentTitle').value;
+            const time = document.getElementById('appointmentTime').value;
+
+            if (!title || !time) {
+                alert('Please fill in all fields!');
+                return;
+            }
+
+            const appointment = {
+                id: Date.now(),
+                title: title,
+                time: time,
+                paradox: paradoxes[Math.floor(Math.random() * paradoxes.length)]
+            };
+
+            appointments.push(appointment);
+            paradoxLevel = Math.min(100, paradoxLevel + Math.random() * 10 + 3);
+            
+            renderAppointments();
+            updateParadoxMeter();
+            closeModal();
+        }
+
+        function renderAppointments() {
+            const container = document.getElementById('appointments');
+            
+            if (appointments.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">No appointments in this timeline... yet.</p>';
+                return;
+            }
+
+            appointments.sort((a, b) => a.time.localeCompare(b.time));
+
+            container.innerHTML = appointments.map(apt => `
+                <div class="appointment">
+                    <div class="appointment-time">⏰ ${apt.time}</div>
+                    <div class="appointment-title">${apt.title}</div>
+                    <div class="appointment-paradox">⚠️ ${apt.paradox}</div>
+                </div>
+            `).join('');
+        }
+
+        function hackParadox() {
+            if (paradoxLevel < 10) {
+                alert('⚠️ Paradox level too low to hack. Add more appointments first!');
+                return;
+            }
+
+            paradoxLevel = Math.max(0, paradoxLevel - Math.random() * 30 - 10);
+            updateParadoxMeter();
+            alert('🔧 Timeline hacked! Paradox level reduced!');
+        }
+
+        function resetTimeline() {
+            appointments = [];
+            paradoxLevel = 0;
+            renderAppointments();
+            updateParadoxMeter();
+            alert('🔄 Timeline reset to stable state.');
+        }
+
+        // Update clock every second
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>

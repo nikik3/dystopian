@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 Neon Signals - Echoes from the Future</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0d0221 0%, #1f0747 100%);
+            color: #ff006e;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid #ff006e;
+            box-shadow: 0 0 20px rgba(255, 0, 110, 0.3);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-shadow: 0 0 10px #ff006e, 0 0 20px #ff006e, 0 0 30px #8338ec;
+            animation: neon 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes neon {
+            from { text-shadow: 0 0 10px #ff006e, 0 0 20px #ff006e, 0 0 30px #8338ec; }
+            to { text-shadow: 0 0 20px #ff006e, 0 0 30px #ff006e, 0 0 40px #8338ec, 0 0 50px #8338ec; }
+        }
+
+        .subtitle {
+            color: #8338ec;
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+
+        .universe-indicator {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 0, 110, 0.1);
+            border: 2px solid #ff006e;
+            border-radius: 10px;
+        }
+
+        .universe-label {
+            color: #8338ec;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .universe-id {
+            color: #ff006e;
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        .feed {
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .post {
+            background: rgba(131, 56, 236, 0.1);
+            border-left: 4px solid #8338ec;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .post:hover {
+            background: rgba(131, 56, 236, 0.2);
+            transform: translateX(5px);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-user {
+            color: #ff006e;
+            font-weight: bold;
+        }
+
+        .post-universe {
+            color: #8338ec;
+            font-size: 0.85rem;
+            padding: 3px 8px;
+            background: rgba(131, 56, 236, 0.2);
+            border-radius: 5px;
+        }
+
+        .post-content {
+            color: #fff;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+
+        .post-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 0, 110, 0.2);
+        }
+
+        .post-verdict {
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .verdict-good {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            border: 1px solid #00ff88;
+        }
+
+        .verdict-bad {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+        }
+
+        .verdict-unknown {
+            background: rgba(255, 170, 0, 0.2);
+            color: #ffaa00;
+            border: 1px solid #ffaa00;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 5px 12px;
+            border: 1px solid #ff006e;
+            background: transparent;
+            color: #ff006e;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-small:hover {
+            background: #ff006e;
+            color: #0d0221;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff006e, #8338ec);
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 15px rgba(255, 0, 110, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(255, 0, 110, 0.8);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 0, 110, 0.1);
+            border: 2px solid #ff006e;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #8338ec;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff006e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔮 NEON SIGNALS</h1>
+            <p class="subtitle">// Echoes from the Future</p>
+        </header>
+
+        <div class="universe-indicator">
+            <div class="universe-label">CURRENT TIMELINE</div>
+            <div class="universe-id" id="currentUniverse">PRIME-α</div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">SIGNALS</div>
+                <div class="stat-value" id="totalSignals">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">UNIVERSES</div>
+                <div class="stat-value" id="totalUniverses">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">DECODED</div>
+                <div class="stat-value" id="decodedSignals">0</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="receiveSignal()">📡 RECEIVE SIGNAL</button>
+            <button class="btn" onclick="shiftUniverse()">🌀 SHIFT UNIVERSE</button>
+            <button class="btn" onclick="clearFeed()">🗑️ CLEAR FEED</button>
+        </div>
+
+        <div class="feed" id="signalFeed"></div>
+    </div>
+
+    <script>
+        const universes = ['PRIME-α', 'BETA-ω', 'GAMMA-δ', 'DELTA-π', 'EPSILON-σ', 'ZETA-λ', 'ETA-μ', 'THETA-ξ'];
+        
+        const signalTemplates = [
+            { content: 'Avoid cryptocurrency investments after 2025. Total market collapse imminent.', verdict: 'bad' },
+            { content: 'Invest in renewable energy now. It becomes the dominant industry.', verdict: 'good' },
+            { content: 'The AI uprising starts with a benevolent phase. Embrace it early.', verdict: 'good' },
+            { content: 'Stop using social media in 2026. It becomes a surveillance state tool.', verdict: 'bad' },
+            { content: 'Learn quantum computing now. It replaces all traditional computing.', verdict: 'good' },
+            { content: 'That project you\'re working on? Abandon it. It leads nowhere.', verdict: 'bad' },
+            { content: 'Move to higher ground before 2030. Sea levels rise dramatically.', verdict: 'bad' },
+            { content: 'The person you meet next Tuesday changes everything. Pay attention.', verdict: 'good' },
+            { content: 'Start a garden. Food scarcity hits sooner than expected.', verdict: 'bad' },
+            { content: 'Trust your instincts on March 15th. They save your life.', verdict: 'good' },
+            { content: 'The tech bubble bursts again in 2027. Diversify your portfolio now.', verdict: 'bad' },
+            { content: 'Learn to code in Rust. It becomes the industry standard.', verdict: 'good' },
+            { content: 'Space tourism becomes affordable by 2032. Book your ticket early.', verdict: 'good' },
+            { content: 'Delete all your data before the breach. It happens on a Thursday.', verdict: 'bad' },
+            { content: 'The vintage tech you\'re hoarding becomes invaluable. Keep it.', verdict: 'good' }
+        ];
+
+        const usernames = ['Future_You', 'Alt_Timeline_Self', 'Quantum_Echo', 'Parallel_Me', 'Timeline_Ghost', 'Mirror_Self', 'Divergent_Path'];
+
+        let signals = [];
+        let currentUniverse = universes[0];
+        let decodedCount = 0;
+
+        function updateStats() {
+            document.getElementById('totalSignals').textContent = signals.length;
+            document.getElementById('totalUniverses').textContent = new Set(signals.map(s => s.universe)).size;
+            document.getElementById('decodedSignals').textContent = decodedCount;
+        }
+
+        function receiveSignal() {
+            const template = signalTemplates[Math.floor(Math.random() * signalTemplates.length)];
+            const username = usernames[Math.floor(Math.random() * usernames.length)];
+            const universe = universes[Math.floor(Math.random() * universes.length)];
+
+            const signal = {
+                id: Date.now(),
+                user: username,
+                universe: universe,
+                content: template.content,
+                verdict: null,
+                timestamp: new Date().toLocaleString(),
+                correctVerdict: template.verdict
+            };
+
+            signals.unshift(signal);
+            renderFeed();
+            updateStats();
+        }
+
+        function shiftUniverse() {
+            currentUniverse = universes[Math.floor(Math.random() * universes.length)];
+            document.getElementById('currentUniverse').textContent = currentUniverse;
+        }
+
+        function renderFeed() {
+            const feed = document.getElementById('signalFeed');
+            
+            if (signals.length === 0) {
+                feed.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No signals detected... Listening to the multiverse...</p>';
+                return;
+            }
+
+            feed.innerHTML = signals.map(signal => `
+                <div class="post">
+                    <div class="post-header">
+                        <div class="post-user">@${signal.user}</div>
+                        <div class="post-universe">Universe: ${signal.universe}</div>
+                    </div>
+                    <div class="post-content">${signal.content}</div>
+                    <div class="post-footer">
+                        ${signal.verdict ? 
+                            `<div class="post-verdict verdict-${signal.verdict}">${signal.verdict.toUpperCase()} ADVICE</div>` :
+                            `<div class="post-verdict verdict-unknown">UNDECODED</div>`
+                        }
+                        <div class="post-actions">
+                            ${!signal.verdict ? `
+                                <button class="btn-small" onclick="decodeSignal(${signal.id}, 'good')">✓ GOOD</button>
+                                <button class="btn-small" onclick="decodeSignal(${signal.id}, 'bad')">✗ BAD</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function decodeSignal(id, verdict) {
+            const signal = signals.find(s => s.id === id);
+            if (!signal) return;
+
+            signal.verdict = verdict;
+            decodedCount++;
+            
+            const correct = signal.verdict === signal.correctVerdict;
+            const message = correct ? 
+                '✓ Correct interpretation! You understand this timeline.' :
+                '✗ Incorrect! This signal was from a divergent reality.';
+            
+            alert(message);
+            renderFeed();
+            updateStats();
+        }
+
+        function clearFeed() {
+            if (confirm('Clear all signals from the feed?')) {
+                signals = [];
+                decodedCount = 0;
+                renderFeed();
+                updateStats();
+            }
+        }
+
+        updateStats();
+        renderFeed();
+    </script>
+</body>
+</html>

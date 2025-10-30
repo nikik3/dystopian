@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚔️ Survival Tracker - Code Your Escape</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: #ddd;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid #f39c12;
+            box-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #f39c12;
+            text-shadow: 0 0 10px #f39c12, 0 0 20px #f39c12;
+            animation: flicker 3s ease-in-out infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
+
+        .subtitle {
+            color: #e67e22;
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .resources-panel {
+            background: rgba(243, 156, 18, 0.1);
+            border: 2px solid #f39c12;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .resources-panel h2 {
+            color: #f39c12;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .resource {
+            margin: 15px 0;
+        }
+
+        .resource-label {
+            color: #e67e22;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .resource-bar {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #f39c12;
+            border-radius: 5px;
+            height: 25px;
+            overflow: hidden;
+        }
+
+        .resource-fill {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+            height: 100%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(243, 156, 18, 0.6);
+        }
+
+        .game-area {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #f39c12;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 500px;
+        }
+
+        .day-counter {
+            text-align: center;
+            font-size: 2rem;
+            color: #f39c12;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #f39c12;
+        }
+
+        .event-log {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #f39c12;
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .event {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(243, 156, 18, 0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .event-danger { color: #e74c3c; }
+        .event-success { color: #2ecc71; }
+        .event-warning { color: #f39c12; }
+        .event-info { color: #3498db; }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: #0f2027;
+            border: none;
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(243, 156, 18, 0.8);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-panel {
+            background: rgba(243, 156, 18, 0.1);
+            border: 2px solid #f39c12;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+
+        .status-item {
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+        }
+
+        .status-label {
+            color: #e67e22;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .status-value {
+            color: #f39c12;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 100%);
+            border: 3px solid #f39c12;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(243, 156, 18, 0.6);
+        }
+
+        .modal-content h2 {
+            color: #f39c12;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚔️ SURVIVAL TRACKER</h1>
+            <p class="subtitle">// Code Your Escape</p>
+        </header>
+
+        <div class="status-panel">
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-label">SURVIVOR STATUS</div>
+                    <div class="status-value" id="status">ALIVE</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">THREAT LEVEL</div>
+                    <div class="status-value" id="threat">LOW</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">SHELTER</div>
+                    <div class="status-value" id="shelter">NONE</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="resources-panel">
+                <h2>📊 RESOURCES</h2>
+                <div class="resource">
+                    <div class="resource-label">
+                        <span>💧 Water</span>
+                        <span id="waterValue">100</span>
+                    </div>
+                    <div class="resource-bar">
+                        <div class="resource-fill" id="waterBar" style="width: 100%"></div>
+                    </div>
+                </div>
+                <div class="resource">
+                    <div class="resource-label">
+                        <span>🍖 Food</span>
+                        <span id="foodValue">100</span>
+                    </div>
+                    <div class="resource-bar">
+                        <div class="resource-fill" id="foodBar" style="width: 100%"></div>
+                    </div>
+                </div>
+                <div class="resource">
+                    <div class="resource-label">
+                        <span>❤️ Health</span>
+                        <span id="healthValue">100</span>
+                    </div>
+                    <div class="resource-bar">
+                        <div class="resource-fill" id="healthBar" style="width: 100%"></div>
+                    </div>
+                </div>
+                <div class="resource">
+                    <div class="resource-label">
+                        <span>🛡️ Defense</span>
+                        <span id="defenseValue">0</span>
+                    </div>
+                    <div class="resource-bar">
+                        <div class="resource-fill" id="defenseBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-area">
+                <div class="day-counter">DAY <span id="day">1</span></div>
+                
+                <div class="event-log" id="eventLog">
+                    <div class="event event-info">You wake up in an unknown wasteland. Survival begins now.</div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn" onclick="scavengeWater()" id="waterBtn">💧 FIND WATER</button>
+                    <button class="btn" onclick="huntFood()" id="foodBtn">🍖 HUNT FOOD</button>
+                    <button class="btn" onclick="buildShelter()" id="shelterBtn">🏠 BUILD SHELTER</button>
+                    <button class="btn" onclick="craftWeapon()" id="weaponBtn">⚔️ CRAFT WEAPON</button>
+                    <button class="btn" onclick="explore()" id="exploreBtn">🗺️ EXPLORE</button>
+                    <button class="btn" onclick="rest()" id="restBtn">😴 REST</button>
+                    <button class="btn" onclick="nextDay()" id="nextDayBtn">⏭️ NEXT DAY</button>
+                    <button class="btn" onclick="resetGame()">🔄 NEW GAME</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameOverModal" class="modal">
+        <div class="modal-content">
+            <h2 id="gameOverTitle">💀 GAME OVER</h2>
+            <p id="gameOverMessage" style="color: #ddd; margin: 20px 0;"></p>
+            <button class="btn" onclick="resetGame()">TRY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        let resources = {
+            water: 100,
+            food: 100,
+            health: 100,
+            defense: 0
+        };
+        let day = 1;
+        let hasShelter = false;
+        let hasWeapon = false;
+        let gameActive = true;
+        let actionsToday = 0;
+
+        function updateResources() {
+            document.getElementById('waterValue').textContent = resources.water;
+            document.getElementById('waterBar').style.width = resources.water + '%';
+            
+            document.getElementById('foodValue').textContent = resources.food;
+            document.getElementById('foodBar').style.width = resources.food + '%';
+            
+            document.getElementById('healthValue').textContent = resources.health;
+            document.getElementById('healthBar').style.width = resources.health + '%';
+            
+            document.getElementById('defenseValue').textContent = resources.defense;
+            document.getElementById('defenseBar').style.width = Math.min(100, resources.defense) + '%';
+
+            document.getElementById('shelter').textContent = hasShelter ? 'BUILT' : 'NONE';
+            
+            const threatLevel = resources.defense > 50 ? 'LOW' : resources.defense > 20 ? 'MEDIUM' : 'HIGH';
+            document.getElementById('threat').textContent = threatLevel;
+
+            if (resources.health <= 0 || resources.water <= 0 || resources.food <= 0) {
+                gameOver();
+            }
+        }
+
+        function logEvent(message, type = 'info') {
+            const log = document.getElementById('eventLog');
+            const event = document.createElement('div');
+            event.className = `event event-${type}`;
+            event.textContent = `Day ${day}: ${message}`;
+            log.insertBefore(event, log.firstChild);
+        }
+
+        function scavengeWater() {
+            if (!gameActive || actionsToday >= 2) return;
+            actionsToday++;
+            
+            const found = Math.floor(Math.random() * 30 + 10);
+            resources.water = Math.min(100, resources.water + found);
+            logEvent(`Found ${found} water units`, 'success');
+            updateResources();
+        }
+
+        function huntFood() {
+            if (!gameActive || actionsToday >= 2) return;
+            actionsToday++;
+
+            if (Math.random() > 0.6) {
+                const found = Math.floor(Math.random() * 40 + 20);
+                resources.food = Math.min(100, resources.food + found);
+                logEvent(`Successful hunt! Gained ${found} food`, 'success');
+            } else {
+                resources.health -= 10;
+                logEvent('Hunt failed. Lost 10 health', 'danger');
+            }
+            updateResources();
+        }
+
+        function buildShelter() {
+            if (!gameActive || hasShelter || actionsToday >= 2) return;
+            actionsToday++;
+
+            hasShelter = true;
+            resources.defense += 30;
+            logEvent('Shelter built! Defense increased', 'success');
+            document.getElementById('shelterBtn').disabled = true;
+            updateResources();
+        }
+
+        function craftWeapon() {
+            if (!gameActive || hasWeapon || actionsToday >= 2) return;
+            actionsToday++;
+
+            hasWeapon = true;
+            resources.defense += 25;
+            logEvent('Weapon crafted! Defense increased', 'success');
+            document.getElementById('weaponBtn').disabled = true;
+            updateResources();
+        }
+
+        function explore() {
+            if (!gameActive || actionsToday >= 2) return;
+            actionsToday++;
+
+            const events = [
+                { msg: 'Found abandoned supplies!', water: 20, food: 20, type: 'success' },
+                { msg: 'Encountered hostile wildlife!', health: -25, type: 'danger' },
+                { msg: 'Discovered a water source', water: 30, type: 'success' },
+                { msg: 'Found medical supplies', health: 15, type: 'success' },
+                { msg: 'Fell into a trap', health: -15, type: 'danger' }
+            ];
+
+            const event = events[Math.floor(Math.random() * events.length)];
+            if (event.water) resources.water = Math.min(100, resources.water + event.water);
+            if (event.food) resources.food = Math.min(100, resources.food + event.food);
+            if (event.health) resources.health = Math.max(0, resources.health + event.health);
+
+            logEvent(event.msg, event.type);
+            updateResources();
+        }
+
+        function rest() {
+            if (!gameActive || actionsToday >= 2) return;
+            actionsToday++;
+
+            const healAmount = hasShelter ? 20 : 10;
+            resources.health = Math.min(100, resources.health + healAmount);
+            logEvent(`Rested. Recovered ${healAmount} health`, 'success');
+            updateResources();
+        }
+
+        function nextDay() {
+            if (!gameActive) return;
+
+            day++;
+            actionsToday = 0;
+            
+            // Daily consumption
+            resources.water -= hasShelter ? 10 : 15;
+            resources.food -= 12;
+            
+            // Random events
+            if (Math.random() > 0.7) {
+                const threat = Math.floor(Math.random() * 30);
+                const damage = Math.max(0, threat - resources.defense);
+                resources.health -= damage;
+                if (damage > 0) {
+                    logEvent(`Night attack! Lost ${damage} health`, 'danger');
+                } else {
+                    logEvent('Night attack repelled!', 'success');
+                }
+            }
+
+            document.getElementById('day').textContent = day;
+            logEvent('A new day begins...', 'info');
+            updateResources();
+
+            if (day >= 30) {
+                winGame();
+            }
+        }
+
+        function gameOver() {
+            gameActive = false;
+            let reason = '';
+            if (resources.health <= 0) reason = 'You succumbed to your injuries.';
+            else if (resources.water <= 0) reason = 'You died of dehydration.';
+            else if (resources.food <= 0) reason = 'You starved to death.';
+
+            document.getElementById('gameOverTitle').textContent = '💀 YOU DIED';
+            document.getElementById('gameOverMessage').textContent = `${reason} You survived ${day} days.`;
+            document.getElementById('gameOverModal').style.display = 'flex';
+            document.getElementById('status').textContent = 'DEAD';
+        }
+
+        function winGame() {
+            gameActive = false;
+            document.getElementById('gameOverTitle').textContent = '🎉 VICTORY!';
+            document.getElementById('gameOverMessage').textContent = `You survived 30 days in the wasteland! Final Score: ${resources.health + resources.water + resources.food + resources.defense}`;
+            document.getElementById('gameOverModal').style.display = 'flex';
+            document.getElementById('status').textContent = 'SURVIVOR';
+        }
+
+        function resetGame() {
+            resources = { water: 100, food: 100, health: 100, defense: 0 };
+            day = 1;
+            hasShelter = false;
+            hasWeapon = false;
+            gameActive = true;
+            actionsToday = 0;
+
+            document.getElementById('shelterBtn').disabled = false;
+            document.getElementById('weaponBtn').disabled = false;
+            document.getElementById('gameOverModal').style.display = 'none';
+            document.getElementById('day').textContent = day;
+            document.getElementById('status').textContent = 'ALIVE';
+            document.getElementById('eventLog').innerHTML = '<div class="event event-info">You wake up in an unknown wasteland. Survival begins now.</div>';
+            
+            updateResources();
+        }
+
+        updateResources();
+    </script>
+</body>
+</html>
