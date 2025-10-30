@@ -79,7 +79,7 @@
         rgba(255, 0, 0, 0.25),   /* Red tone overlay */
         rgba(0, 255, 255, 0.25)  /* Cyan tone overlay */
       ),
-      url("/img.png"); /* Replace with your image path */
+      url("/img4.png"); /* Replace with your image path */
     
     background-size: cover;
     background-repeat: no-repeat;
